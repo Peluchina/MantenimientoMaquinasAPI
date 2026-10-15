@@ -17,6 +17,8 @@ API ASP.NET Core 8 organizada por capas de dominio, aplicación (CQRS) e infraes
 | POST | `/api/machines` | Crear máquina |
 | PUT | `/api/machines/{id}` | Actualizar máquina |
 | DELETE | `/api/machines/{id}` | Eliminar máquina; responde 409 si conserva historial o mantenimientos |
+| GET | `/api/machines/{machineId}/temperatures` | Listar el historial de temperaturas de una máquina |
+| POST | `/api/machines/{machineId}/temperatures` | Registrar una temperatura y actualizar la temperatura actual de la máquina |
 | GET | `/api/users` | Listar usuarios |
 | GET | `/api/users/{id}` | Obtener usuario |
 | POST | `/api/users` | Crear usuario |
@@ -25,6 +27,6 @@ API ASP.NET Core 8 organizada por capas de dominio, aplicación (CQRS) e infraes
 
 Las solicitudes inválidas responden `400 Bad Request`; las búsquedas de recursos inexistentes responden `404 Not Found`; los nombres de usuario y correos duplicados responden `409 Conflict`. La creación responde `201 Created`, las actualizaciones y eliminaciones o desactivaciones exitosas responden `204 No Content`, y las consultas exitosas responden `200 OK`.
 
-Los módulos Machine y Users están organizados en dominio, aplicación CQRS e infraestructura. Los handlers dependen de contratos de repositorio; las implementaciones Dapper invocan los procedimientos almacenados. Las contraseñas de Users se almacenan con hash PBKDF2 y no se incluyen en las respuestas.
+Los módulos Machine, Users e historial de temperaturas están organizados en dominio, aplicación CQRS e infraestructura. Los handlers dependen de contratos de repositorio; las implementaciones Dapper invocan los procedimientos almacenados. Las contraseñas de Users se almacenan con hash PBKDF2 y no se incluyen en las respuestas. El historial de temperaturas es de solo registro: las tablas y procedimientos proporcionados no incluyen operaciones para editar o borrar mediciones.
 
 La eliminación de un usuario usa el procedimiento `Users_Delete`, que lo marca como `INACTIVO` para conservar referencias e historial.

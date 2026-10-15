@@ -72,3 +72,4 @@ C:\Users\eliss\source\repos\MantenimientoMaquinasAPI\MantenimientoMaquinasAPI\ob
 C:\Users\eliss\source\repos\MantenimientoMaquinasAPI\MantenimientoMaquinasAPI\obj\Debug\net8.0\MantenimientoMaquinasAPI.genruntimeconfig.cache
 C:\Users\eliss\source\repos\MantenimientoMaquinasAPI\MantenimientoMaquinasAPI\obj\Debug\net8.0\ref\MantenimientoMaquinasAPI.dll
 C:\Users\eliss\source\repos\MantenimientoMaquinasAPI\MantenimientoMaquinasAPI\bin\Debug\net8.0\FluentValidation.dll
+C:\Users\eliss\source\repos\MantenimientoMaquinasAPI\MantenimientoMaquinasAPI\obj\Debug\net8.0\MantenimientoMaquinasAPI.sourcelink.json
