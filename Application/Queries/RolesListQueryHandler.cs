@@ -9,11 +9,11 @@ namespace MantenimientoMaquinasAPI.Application.Queries
         public async Task<IReadOnlyList<RolesListResponse>> Handle(RolesListQuery query, CancellationToken ct = default)
         {
             var roles = await repository.GetAll(ct);
-            return roles.Select(machine => new RolesListResponse
+            return roles.Select(role => new RolesListResponse
             {
-                RoleId = machine.RoleId,
-                RoleName = machine.RoleName,
-                Description = machine.Description
+                RoleId = role.RoleId,
+                RoleName = role.RoleName,
+                Description = role.Description
             }).ToArray();
         }
     }

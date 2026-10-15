@@ -2,7 +2,6 @@
 using MantenimientoMaquinasAPI.Domain.Agregates;
 using MantenimientoMaquinasAPI.Domain.Contracts;
 using MantenimientoMaquinasAPI.Infrastructure.Data;
-using Microsoft.AspNetCore.Connections;
 using System.Data;
 
 namespace MantenimientoMaquinasAPI.Infrastructure.Repository

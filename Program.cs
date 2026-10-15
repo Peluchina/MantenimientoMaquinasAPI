@@ -31,6 +31,8 @@ builder.Services.AddScoped<UsersDeleteCommandHandler>();
 builder.Services.AddScoped<IValidator<UsersCreateCommand>, UsersCreateCommandValidator>();
 builder.Services.AddScoped<IValidator<UsersUpdateCommand>, UsersUpdateCommandValidator>();
 builder.Services.AddScoped<IValidator<UsersDeleteCommand>, UsersDeleteCommandValidator>();
+builder.Services.AddScoped<IRolesRespositoryWR, RolesRepository>();
+builder.Services.AddScoped<RolesListQueryHandler>();
 
 builder.Services.AddScoped<IMaintenanceRecordsRespositoryWR, MaintenanceRecordsRepository>();
 builder.Services.AddScoped<MaintenanceRecordsGetQueryHandler>();
