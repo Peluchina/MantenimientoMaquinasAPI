@@ -1,12 +1,7 @@
-﻿using System.Security.Principal;
+namespace MantenimientoMaquinasAPI.Application.Dto;
 
-namespace MantenimientoMaquinasAPI.Application.Dto
+public sealed class MachineTemperatureHistoryCreateRequest
 {
-    public class MachineTemperatureHistoryCreateRequest
-    {
-        public int MachineId { get; set; }
-        public int UserId { get; set; }
-        public decimal Temperature { get; set; }
-
-    }
+    public int? UserId { get; set; }
+    public decimal Temperature { get; set; }
 }

@@ -35,6 +35,21 @@ public sealed class MachineExceptionMiddleware(RequestDelegate next, ILogger<Mac
             await Results.Problem(statusCode: StatusCodes.Status400BadRequest, title: "Solicitud inválida",
                 detail: "Los datos enviados no cumplen las reglas del usuario o el rol indicado no existe.").ExecuteAsync(context);
         }
+        catch (SqlException exception) when (exception.Number == 50203)
+        {
+            await Results.Problem(statusCode: StatusCodes.Status400BadRequest, title: "Solicitud inválida",
+                detail: "La temperatura debe ser mayor o igual que cero.").ExecuteAsync(context);
+        }
+        catch (SqlException exception) when (exception.Number == 50204)
+        {
+            await Results.Problem(statusCode: StatusCodes.Status404NotFound, title: "Máquina no encontrada",
+                detail: "No existe una máquina con el identificador indicado.").ExecuteAsync(context);
+        }
+        catch (SqlException exception) when (exception.Number == 50205)
+        {
+            await Results.Problem(statusCode: StatusCodes.Status400BadRequest, title: "Usuario inválido",
+                detail: "El usuario indicado no existe o está inactivo.").ExecuteAsync(context);
+        }
         catch (SqlException exception) when (exception.Number is 50104 or 50105)
         {
             await Results.Problem(statusCode: StatusCodes.Status404NotFound, title: "Usuario no encontrado",
