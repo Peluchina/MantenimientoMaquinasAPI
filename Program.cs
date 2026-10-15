@@ -31,6 +31,11 @@ builder.Services.AddScoped<UsersDeleteCommandHandler>();
 builder.Services.AddScoped<IValidator<UsersCreateCommand>, UsersCreateCommandValidator>();
 builder.Services.AddScoped<IValidator<UsersUpdateCommand>, UsersUpdateCommandValidator>();
 builder.Services.AddScoped<IValidator<UsersDeleteCommand>, UsersDeleteCommandValidator>();
+builder.Services.AddScoped<IMaintenanceRecordsRespositoryWR, MaintenanceRecordsRepository>();
+builder.Services.AddScoped<MaintenanceRecordsGetQueryHandler>();
+builder.Services.AddScoped<MaintenanceRecordsListQueryHandler>();
+builder.Services.AddScoped<MaintenanceRecordsCreateCommandHandler>();
+builder.Services.AddScoped<IValidator<MaintenanceRecordsCreateCommand>, MaintenanceRecordsCreateCommandValidator>();
 
 var app = builder.Build();
 app.UseMiddleware<MachineExceptionMiddleware>();

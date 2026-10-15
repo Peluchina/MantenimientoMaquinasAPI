@@ -1,9 +1,10 @@
-﻿using MantenimientoMaquinasAPI.Application.Dto;
+using MantenimientoMaquinasAPI.Application.Dto;
+using MantenimientoMaquinasAPI.Application.Parameters;
 
-namespace MantenimientoMaquinasAPI.Application.Commands
+namespace MantenimientoMaquinasAPI.Application.Commands;
+
+public sealed class MaintenanceRecordsCreateCommand
 {
-    public class MaintenanceRecordsCreateCommand
-    {
-        public required MaintenanceRecordsCreateRequest Request { get; set; }
-    }
+    public required MaintenanceRecordsGetParams Params { get; init; }
+    public required MaintenanceRecordsCreateRequest Request { get; init; }
 }

@@ -8,6 +8,8 @@
         public DateTime MaintenanceDate { get; set; }
         public string? MaintenanceType { get; set; }
         public string? Description { get; set; }
-        public decimal Cost { get; set; }
+        public decimal? Cost { get; set; }
+        public string? MachineName { get; set; }
+        public string? Responsible { get; set; }
     }
 }

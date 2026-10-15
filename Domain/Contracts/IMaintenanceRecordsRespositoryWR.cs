@@ -1,6 +1,9 @@
-﻿namespace MantenimientoMaquinasAPI.Domain.Contracts
+using MantenimientoMaquinasAPI.Domain.Agregates;
+
+namespace MantenimientoMaquinasAPI.Domain.Contracts;
+
+public interface IMaintenanceRecordsRespositoryWR
 {
-    public interface IMaintenanceRecordsRespositoryWR
-    {
-    }
+    Task<IEnumerable<MaintenanceRecords>> GetByMachine(int machineId, CancellationToken cancellationToken = default);
+    Task<int> Insert(MaintenanceRecords maintenanceRecord, CancellationToken cancellationToken = default);
 }
