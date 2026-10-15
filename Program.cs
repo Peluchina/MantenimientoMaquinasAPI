@@ -31,11 +31,19 @@ builder.Services.AddScoped<UsersDeleteCommandHandler>();
 builder.Services.AddScoped<IValidator<UsersCreateCommand>, UsersCreateCommandValidator>();
 builder.Services.AddScoped<IValidator<UsersUpdateCommand>, UsersUpdateCommandValidator>();
 builder.Services.AddScoped<IValidator<UsersDeleteCommand>, UsersDeleteCommandValidator>();
+
 builder.Services.AddScoped<IMaintenanceRecordsRespositoryWR, MaintenanceRecordsRepository>();
 builder.Services.AddScoped<MaintenanceRecordsGetQueryHandler>();
 builder.Services.AddScoped<MaintenanceRecordsListQueryHandler>();
 builder.Services.AddScoped<MaintenanceRecordsCreateCommandHandler>();
 builder.Services.AddScoped<IValidator<MaintenanceRecordsCreateCommand>, MaintenanceRecordsCreateCommandValidator>();
+
+builder.Services.AddScoped<IMachineTemperatureHistoryRespositoryWR, MachineTemperatureHistoryRepository>();
+builder.Services.AddScoped<MachineTemperatureHistoryGetQueryHandler>();
+builder.Services.AddScoped<MachineTemperatureHistoryListQueryHandler>();
+builder.Services.AddScoped<MachineTemperatureHistoryCreateCommandHandler>();
+builder.Services.AddScoped<IValidator<MachineTemperatureHistoryCreateCommand>, MachineTemperatureHistoryCreateCommandValidator>();
+
 
 var app = builder.Build();
 app.UseMiddleware<MachineExceptionMiddleware>();

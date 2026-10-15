@@ -1,0 +1,10 @@
+# Archivos generados por .NET
+bin/
+obj/
+.vs/
+
+# Configuración local de Visual Studio
+*.csproj.user
+
+# Credenciales y secretos
+.env

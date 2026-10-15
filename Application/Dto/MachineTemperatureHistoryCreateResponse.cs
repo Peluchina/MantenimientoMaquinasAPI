@@ -2,6 +2,6 @@
 {
     public class MachineTemperatureHistoryCreateResponse
     {
-        public int TemperatureHistoryId { get; set; }
+        public long TemperatureHistoryId { get; set; }
     }
 }
