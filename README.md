@@ -6,7 +6,8 @@ API ASP.NET Core 8 organizada por capas de dominio, aplicación (CQRS) e infraes
 
 1. Crea la base de datos y ejecuta los scripts de [`Database/Tables`](Database/Tables) y [`Database/StoredProcedures`](Database/StoredProcedures) en orden. Los procedimientos esperan el esquema `dbo` y que existan también las tablas `Users` y `Roles` referenciadas.
 2. Configura `ConnectionStrings:PPA` en `appsettings.json` o como variable de entorno `ConnectionStrings__PPA`. No guardes credenciales reales en el repositorio.
-3. Ejecuta la API con `dotnet run` desde la carpeta del proyecto. En desarrollo, Swagger queda disponible en `/swagger`.
+3. Para habilitar el inicio de sesión, configura `Google:ClientId` con el ID de cliente OAuth de tipo aplicación web y `Jwt:SecretKey` con una clave aleatoria de al menos 32 bytes. Puedes usar las variables de entorno `Google__ClientId` y `Jwt__SecretKey`; issuer, audience y duración se configuran con `Jwt__Issuer`, `Jwt__Audience` y `Jwt__ExpirationMinutes`. No guardes estas credenciales en el repositorio.
+4. Ejecuta la API con `dotnet run` desde la carpeta del proyecto. En desarrollo, Swagger queda disponible en `/swagger`.
 
 ## Endpoints
 
@@ -26,6 +27,9 @@ API ASP.NET Core 8 organizada por capas de dominio, aplicación (CQRS) e infraes
 | POST | `/api/users` | Crear usuario |
 | PUT | `/api/users/{id}` | Actualizar usuario |
 | DELETE | `/api/users/{id}` | Desactivar usuario sin borrar su historial |
+| POST | `/api/auth/google-login` | Validar un ID token de Google y emitir un JWT de la API |
+
+El cliente web debe obtener un ID token con Google Identity Services y enviarlo como JSON: `{"idToken":"<token de Google>"}`. La API solo permite ingresar a correos verificados que ya existan en `Users`, estén `ACTIVO` y tengan un rol asignado. La respuesta incluye el JWT propio de la API, que el cliente debe enviar en solicitudes protegidas como `Authorization: Bearer <token>`.
 
 Las solicitudes inválidas responden `400 Bad Request`; las búsquedas de recursos inexistentes responden `404 Not Found`; los nombres de usuario y correos duplicados responden `409 Conflict`. La creación responde `201 Created`, las actualizaciones y eliminaciones o desactivaciones exitosas responden `204 No Content`, y las consultas exitosas responden `200 OK`.
 
