@@ -5,9 +5,11 @@ using MantenimientoMaquinasAPI.Application.Validators;
 using MantenimientoMaquinasAPI.Domain.Contracts;
 using MantenimientoMaquinasAPI.Infrastructure.Data;
 using MantenimientoMaquinasAPI.Infrastructure.Repository;
+using MantenimientoMaquinasAPI.Application.Agents;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddScoped<MachinesAgentTools>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -46,6 +48,18 @@ builder.Services.AddScoped<MachineTemperatureHistoryListQueryHandler>();
 builder.Services.AddScoped<MachineTemperatureHistoryCreateCommandHandler>();
 builder.Services.AddScoped<IValidator<MachineTemperatureHistoryCreateCommand>, MachineTemperatureHistoryCreateCommandValidator>();
 
+// Configuración CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AngularPolicy", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:4200")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 
 var app = builder.Build();
 app.UseMiddleware<MachineExceptionMiddleware>();
@@ -57,6 +71,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors("AngularPolicy");
+
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
