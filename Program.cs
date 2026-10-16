@@ -6,6 +6,10 @@ using MantenimientoMaquinasAPI.Domain.Contracts;
 using MantenimientoMaquinasAPI.Infrastructure.Data;
 using MantenimientoMaquinasAPI.Infrastructure.Repository;
 using MantenimientoMaquinasAPI.Application.Agents;
+using MantenimientoMaquinasAPI.Application.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +29,7 @@ builder.Services.AddScoped<IValidator<MachinesCreateCommand>, MachinesCreateComm
 builder.Services.AddScoped<IValidator<MachinesUpdateCommand>, MachinesUpdateCommandValidator>();
 builder.Services.AddScoped<IValidator<MachinesDeleteCommand>, MachinesDeleteCommandValidator>();
 builder.Services.AddScoped<IUsersRepositoryWR, UsersRepository>();
+builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddScoped<UsersListQueryHandler>();
 builder.Services.AddScoped<UsersGetQueryHandler>();
 builder.Services.AddScoped<UsersCreateCommandHandler>();
@@ -48,7 +53,7 @@ builder.Services.AddScoped<MachineTemperatureHistoryListQueryHandler>();
 builder.Services.AddScoped<MachineTemperatureHistoryCreateCommandHandler>();
 builder.Services.AddScoped<IValidator<MachineTemperatureHistoryCreateCommand>, MachineTemperatureHistoryCreateCommandValidator>();
 
-// Configuración CORS
+// ConfiguraciÃ³n CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AngularPolicy", policy =>
@@ -60,6 +65,28 @@ builder.Services.AddCors(options =>
     });
 });
 
+var jwtSecret = builder.Configuration["Jwt:SecretKey"];
+if (string.IsNullOrWhiteSpace(jwtSecret) || Encoding.UTF8.GetByteCount(jwtSecret) < 32)
+{
+    throw new InvalidOperationException("Falta configurar Jwt:SecretKey con una clave aleatoria de al menos 32 bytes.");
+}
+
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = !string.IsNullOrWhiteSpace(builder.Configuration["Jwt:Issuer"]),
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidateAudience = !string.IsNullOrWhiteSpace(builder.Configuration["Jwt:Audience"]),
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret)),
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.FromSeconds(30)
+        };
+    });
 
 var app = builder.Build();
 app.UseMiddleware<MachineExceptionMiddleware>();
@@ -73,6 +100,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseCors("AngularPolicy");
 
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();

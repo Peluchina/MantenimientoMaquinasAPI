@@ -25,6 +25,20 @@ public sealed class UsersRepository(IConnectionSQL connectionFactory) : IUsersRe
             cancellationToken: cancellationToken));
     }
 
+    public async Task<Users?> GetByEmail(string email, CancellationToken cancellationToken = default)
+    {
+        using var connection = connectionFactory.GetConnection();
+        return await connection.QuerySingleOrDefaultAsync<Users>(new CommandDefinition(
+            """
+            SELECT U.UserId, U.RoleId, U.Username, U.FirstName, U.LastName, U.Email,
+                   U.UserStatus, R.RoleName
+            FROM dbo.Users AS U
+            INNER JOIN dbo.Roles AS R ON R.RoleId = U.RoleId
+            WHERE U.Email = @Email;
+            """,
+            new { Email = email }, cancellationToken: cancellationToken));
+    }
+
     public async Task<int> Insert(Users user, CancellationToken cancellationToken = default)
     {
         using var connection = connectionFactory.GetConnection();
