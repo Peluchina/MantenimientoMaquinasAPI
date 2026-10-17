@@ -10,13 +10,44 @@ using MantenimientoMaquinasAPI.Application.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.Extensions.AI;
+using OpenAI;
+using System.ClientModel;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<MachinesAgentTools>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Ingresa tu token JWT. Ejemplo: Bearer eyJhbGci..."
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
 
 builder.Services.AddSingleton<IConnectionSQL, ConnectionSqL>();
 builder.Services.AddScoped<IMachinesRespositoryWR, MachinesRepository>();
@@ -87,6 +118,35 @@ builder.Services
             ClockSkew = TimeSpan.FromSeconds(30)
         };
     });
+
+var azureEndpoint = builder.Configuration["AzureOpenAI:Endpoint"];
+var azureDeployment = builder.Configuration["AzureOpenAI:Deployment"];
+var azureApiKey = builder.Configuration["AzureOpenAI:ApiKey"];
+
+if (string.IsNullOrWhiteSpace(azureEndpoint) ||
+    string.IsNullOrWhiteSpace(azureDeployment) ||
+    string.IsNullOrWhiteSpace(azureApiKey))
+{
+    throw new InvalidOperationException(
+        "Falta configurar AzureOpenAI:Endpoint, " +
+        "AzureOpenAI:Deployment o AzureOpenAI:ApiKey.");
+}
+
+var openAIClient = new OpenAIClient(
+    new ApiKeyCredential(azureApiKey),
+    new OpenAIClientOptions
+    {
+        Endpoint = new Uri(azureEndpoint)
+    });
+
+builder.Services.AddSingleton<IChatClient>(_ =>
+    new FunctionInvokingChatClient(
+        openAIClient
+            .GetChatClient(azureDeployment)
+            .AsIChatClient()));
+
+builder.Services.AddScoped<IAgentService, AgentService>();
+builder.Services.AddScoped<MachinesAgentTools>();
 
 var app = builder.Build();
 app.UseMiddleware<MachineExceptionMiddleware>();
