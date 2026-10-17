@@ -1,12 +1,36 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MantenimientoMaquinasAPI.Application.Agents;
+using Microsoft.AspNetCore.Authorization;
+using MantenimientoMaquinasAPI.Application.Dto;
+using Microsoft.AspNetCore.Mvc;
 
-namespace MantenimientoMaquinasAPI.Presentation.Controllers
+namespace MantenimientoMaquinasAPI.Presentation.Controllers;
+
+[ApiController]
+[Route("api/agent")]
+[Authorize]
+public class AgentController(
+    IAgentService agentService) : Controller
 {
-    public class AgentController : Controller
+    [HttpPost("chat")]
+    public async Task<IActionResult> Chat(
+    [FromBody] AgentRequest request,
+    CancellationToken cancellationToken)
     {
-        public IActionResult Index()
+        if (string.IsNullOrWhiteSpace(request.Message))
         {
-            return View();
+            return BadRequest(new
+            {
+                message = "La pregunta no puede estar vacía."
+            });
         }
+
+        var answer = await agentService.AskAsync(
+        request.Message,
+        cancellationToken);
+
+            return Ok(new AgentResponse
+            {
+                Answer = answer
+            });
     }
 }
